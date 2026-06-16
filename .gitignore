@@ -1,0 +1,35 @@
+# ===== 공통 =====
+.DS_Store
+*.log
+.env
+.env.local
+*.swp
+
+# ===== Node.js / 백엔드 =====
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+coverage/
+
+# ===== Flutter / 프론트 =====
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+frontend/build/
+frontend/.idea/
+frontend/*.iml
+frontend/.gradle/
+frontend/ios/Pods/
+frontend/ios/.symlinks/
+frontend/android/.gradle/
+frontend/android/local.properties
+
+# ===== IDE =====
+.vscode/
+.antigravity/
+
+# ===== 업로드/생성 이미지 (로컬 저장 시) =====
+backend/uploads/
+backend/outputs/
