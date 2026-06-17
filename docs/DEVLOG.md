@@ -34,3 +34,13 @@
 - [ ] Flutter 프로젝트 생성 (frontend/)
 - [ ] fal.ai 계정 + 키 발급, falService.js 실제 호출 구현
 - [ ] 이미지 업로드 엔드포인트 (multer)
+
+## 작업 결과
+## 2026.06.16
+
+백엔드 MVP 완성. 전체 흐름 curl 검증 성공:
+curl -X POST localhost:8000/tryon -F "humanImage=@사진.jpg" -F "garmentImageUrl=옷URL"
+→ {"resultImageUrl":"..."} 반환. 
+교훈: garment URL은 실제 접근 가능한 이미지여야 함(example.com 안 됨).
+
+
