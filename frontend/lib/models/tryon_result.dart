@@ -1,5 +1,5 @@
 // 가상 피팅 결과 모델.
-// 백엔드 POST /tryon 응답 { fal: {...}, gpt: {...} } 을 파싱한다.
+// 백엔드 POST /tryon 응답 { model, result } 를 파싱한다.
 
 /// fal 또는 gpt 단일 결과.
 class SingleResult {
@@ -33,17 +33,20 @@ class SingleResult {
   bool get isDataUri => imageUrl != null && imageUrl!.startsWith('data:');
 }
 
-/// fal + gpt 두 결과를 묶은 전체 피팅 결과.
+/// 선택된 모델과 그 결과를 담는 전체 피팅 응답.
 class TryOnResult {
-  final SingleResult fal;
-  final SingleResult gpt;
+  /// 호출된 모델 이름. "fal" 또는 "gpt".
+  final String model;
 
-  const TryOnResult({required this.fal, required this.gpt});
+  /// 해당 모델의 실행 결과.
+  final SingleResult result;
+
+  const TryOnResult({required this.model, required this.result});
 
   factory TryOnResult.fromJson(Map<String, dynamic> json) {
     return TryOnResult(
-      fal: SingleResult.fromJson(json['fal'] as Map<String, dynamic>),
-      gpt: SingleResult.fromJson(json['gpt'] as Map<String, dynamic>),
+      model: json['model'] as String,
+      result: SingleResult.fromJson(json['result'] as Map<String, dynamic>),
     );
   }
 }

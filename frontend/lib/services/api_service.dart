@@ -67,25 +67,27 @@ class ApiService {
   // 가상 피팅 API
   // ──────────────────────────────────────────────
 
-  /// 사용자 사진과 옷 이미지 URL로 가상 피팅을 요청한다.
+  /// 사용자 사진, 옷 이미지 URL, 모델 선택으로 가상 피팅을 요청한다.
   /// POST /tryon (multipart/form-data)
-  /// → { fal: { status, imageUrl }, gpt: { status, imageUrl } }
+  /// → { model: "fal" | "gpt", result: { status, imageUrl } }
   Future<TryOnResult> requestTryOn({
     required File humanImage,
     required String garmentImageUrl,
+    required String model,
   }) async {
     final uri = Uri.parse('${ApiConfig.baseUrl}/tryon');
 
     // multipart/form-data 요청을 만든다.
     final request = http.MultipartRequest('POST', uri);
 
-    // 파일 필드: 백엔드 multer 설정의 필드명 'humanImage 와 일치해야 한다.
+    // 파일 필드: 백엔드 multer 설정의 필드명 'humanImage' 와 일치해야 한다.
     request.files.add(
       await http.MultipartFile.fromPath('humanImage', humanImage.path),
     );
 
-    // 텍스트 필드: 옷 이미지 URL.
+    // 텍스트 필드: 옷 이미지 URL과 사용할 모델.
     request.fields['garmentImageUrl'] = garmentImageUrl;
+    request.fields['model'] = model;
 
     // 요청을 보내고 스트림 응답을 일반 Response로 변환한다.
     final streamedResponse = await request.send();

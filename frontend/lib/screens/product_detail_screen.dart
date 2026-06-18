@@ -1,6 +1,6 @@
 // 상품 상세 화면.
 // 상품 이미지·이름·가격을 크게 보여주고,
-// 갤러리에서 사용자 사진을 선택해 가상 피팅을 요청한다.
+// AI 모델(fal.ai / GPT)을 선택한 뒤 갤러리 사진으로 가상 피팅을 요청한다.
 
 import 'dart:io';
 
@@ -28,6 +28,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   XFile? _selectedImage;
   bool _isLoading = false;
 
+  /// 선택된 AI 모델. 기본값은 fal.ai.
+  String _selectedModel = 'fal';
+
   /// 갤러리에서 사진 1장을 선택한다.
   Future<void> _pickImage() async {
     final xFile = await _picker.pickImage(
@@ -40,7 +43,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
-  /// fal + GPT 가상 피팅 요청을 백엔드로 보낸다.
+  /// 선택된 모델로 가상 피팅 요청을 백엔드에 보낸다.
   Future<void> _startTryOn() async {
     if (_selectedImage == null) return;
 
@@ -50,6 +53,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       final result = await _api.requestTryOn(
         humanImage: File(_selectedImage!.path),
         garmentImageUrl: widget.product.garmentImageUrl,
+        model: _selectedModel,
       );
 
       if (!mounted) return;
@@ -120,6 +124,35 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 const SizedBox(height: AppSpacing.lg),
 
                 Text('내 사진으로 피팅해보기', style: textTheme.headlineSmall),
+                const SizedBox(height: AppSpacing.md),
+
+                // AI 모델 선택 토글
+                // 선택된 모델은 포인트 블랙으로 강조된다.
+                // 테마의 colorScheme.primary(AppColors.accent = 검정)가 자동 적용된다.
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'fal', label: Text('fal.ai')),
+                      ButtonSegment(value: 'gpt', label: Text('GPT')),
+                    ],
+                    selected: {_selectedModel},
+                    onSelectionChanged: (selection) {
+                      setState(() => _selectedModel = selection.first);
+                    },
+                    style: SegmentedButton.styleFrom(
+                      backgroundColor: AppColors.surface,
+                      foregroundColor: AppColors.primaryText,
+                      selectedBackgroundColor: AppColors.accent,
+                      selectedForegroundColor: Colors.white,
+                      side: const BorderSide(color: AppColors.border),
+                      textStyle: AppTextStyles.body,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.card),
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.md),
 
                 // 선택된 사진 미리보기 / 플레이스홀더 — 탭해도 사진 선택 가능
